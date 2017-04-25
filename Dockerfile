@@ -21,6 +21,8 @@ apk add --no-cache \
 	libtool \
 	mpc1-dev \
 	mpfr-dev \
+	shadow \
+	su-exec \
 	texinfo
 
 RUN \
@@ -34,4 +36,8 @@ RUN \
 cd /usr/src/musl-cross-make && \
 make -j$(nproc) && \
 make install && \
-rm -rf /usr/src
+rm -rf /usr/src && \
+useradd -m -U -s /bin/sh -u 1234 user && \
+chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
