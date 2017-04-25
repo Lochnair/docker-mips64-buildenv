@@ -32,6 +32,6 @@ COPY root/ /
 
 RUN \
 cd /usr/src/musl-cross-make && \
-make && \
+make -j$(nproc) && \
 make install && \
 rm -rf /usr/src
