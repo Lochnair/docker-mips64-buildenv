@@ -1,43 +1,21 @@
-FROM alpine:3.5
+FROM lochnair/buildenv-base:alpine
 
 LABEL Description="musl build environment for MIPS64"
 LABEL Maintainer="Nils Andreas Svee <me@lochnair.net>"
 
-RUN \
-# Install build dependencies
-apk add --no-cache \
-	--update-cache \
-	autoconf \
-	automake \
-	bison \
-	build-base \
-	coreutils \
-	curl \
-	file \
-	flex \
-	gawk \
-	git \
-	gmp-dev \
-	libtool \
-	mpc1-dev \
-	mpfr-dev \
-	shadow \
-	su-exec \
-	texinfo
+ARG BINUTILS_VER=2.29
+ARG GCC_VER=7.2.0
+ARG GMP_VER=6.1.2
+ARG ISL_VER=0.18
+ARG KERNEL_VER=4.13.2
+ARG MPC_VER=1.0.3
+ARG MPFR_VER=3.1.5
+ARG MUSL_VER=1.1.16
 
-RUN \
-mkdir /usr/src && \
-cd /usr/src && \
-git clone https://github.com/richfelker/musl-cross-make.git
+ENV PATH="/opt/cross/bin:${PATH}"
 
 COPY root/ /
 
-RUN \
-cd /usr/src/musl-cross-make && \
-make -j$(nproc) && \
-make install && \
-rm -rf /usr/src && \
-useradd -m -U -s /bin/sh -u 1234 user && \
-chmod +x /entrypoint.sh
+RUN /build_toolchain.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
